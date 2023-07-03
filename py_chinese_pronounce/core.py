@@ -66,7 +66,6 @@ class Word2Pronounce():
         vocabs = self.vocab_pronounce_df.index.to_list()
         self.ac_tree = ahocorasick.AhoCorasick(*vocabs) # AC自動機
     
-    
     def sent_to_chewin(self,x)->List[str]:
         results = list(self.ac_tree.search(x,True))
         results.sort(key=lambda x:x[-1][1]+(x[-1][1]-x[-1][0])/10)
@@ -103,30 +102,41 @@ class Word2Pronounce():
         chewin_list = [None] * len(x)
         out = [None] * len(x)
 
-        error_check = False
+        polyphone_check = False
+        print('results : ',results)
 
         for r in results:
-            print('results : ',results)
             words = r[0]
             w_range = r[-1]
-
             chewin = self.vocab_pronounce_df.loc[words]['注音一式']
-            print('chewin:',chewin,'\n')
+
+            print('chewin_ori:',chewin,'\n')
+
             if type(chewin) == str:
                 chewin = chewin.strip().split()
             else:
-                chewin = chewin.to_list()            
+                chewin = chewin.to_list()
+            print('chewin_check:',chewin,'\n')
+
+            # 當輸入是多音詞時
+            if (len(words) > 1 and len(chewin) > 1 and '\u3000' in chewin[0]) :
+
+                chewin_pp = self.vocab_pronounce_df.loc[words]['多音排序']
+
+                if type(chewin_pp) == str:
+                    chewin_pp = chewin_pp.strip().split()
+                else:
+                    chewin_pp = chewin_pp.to_list()
+
+                print('chewin_pp',chewin_pp)
+                idx = chewin_pp.index(min(chewin_pp))
+                print('idx:',idx)
+
+                chewin = chewin[idx].split("\u3000")
+                # continue
+                print('chewin_re',chewin)
+
             chewin_idx = 0
-
-            #error check
-            for i in chewin :
-                if ('\u3000' in i) :
-                    print('error check')
-                    error_check = True
-                    break
-            if (error_check == True) :
-                continue
-
             for i in range(w_range[0],w_range[1]):
                 chewin_list[i] = chewin[chewin_idx]
                 chewin_idx += 1
