@@ -13,6 +13,7 @@ class Word2Pronounce():
     文字轉換發音
     """
     def __init__(self) -> None:
+        print('load W2P')
 
         # uni2cns map
         self.uni2cns_dict_path = os.path.join(
@@ -77,7 +78,7 @@ class Word2Pronounce():
 
             chewin = self.vocab_pronounce_df.loc[words]['注音一式']
             if type(chewin) == str:
-                chewin = chewin.strip().split()                
+                chewin = chewin.strip().split()
             else:
                 chewin = chewin.to_list()
             
@@ -93,6 +94,54 @@ class Word2Pronounce():
                 except:
                     pass
         
+        return out
+
+    def sent_to_han(self,x)->List[str]:
+        results = list(self.ac_tree.search(x,True))
+        results.sort(key=lambda x:x[-1][1]+(x[-1][1]-x[-1][0])/10)
+
+        chewin_list = [None] * len(x)
+        out = [None] * len(x)
+
+        error_check = False
+
+        for r in results:
+            print('results : ',results)
+            words = r[0]
+            w_range = r[-1]
+
+            chewin = self.vocab_pronounce_df.loc[words]['注音一式']
+            print('chewin:',chewin,'\n')
+            if type(chewin) == str:
+                chewin = chewin.strip().split()
+            else:
+                chewin = chewin.to_list()            
+            chewin_idx = 0
+
+            #error check
+            for i in chewin :
+                if ('\u3000' in i) :
+                    print('error check')
+                    error_check = True
+                    break
+            if (error_check == True) :
+                continue
+
+            for i in range(w_range[0],w_range[1]):
+                chewin_list[i] = chewin[chewin_idx]
+                chewin_idx += 1
+            print('chewin_list:',chewin_list,'\n')
+
+        print('chewin_list:',chewin_list)
+        for i in range(len(chewin_list)) :
+            out[i] = self._chewin2han(chewin_list[i])
+
+        for i,(o,char) in enumerate(zip(out,x)):
+            if o == None:
+                try:
+                    out[i] = self.to_han(char)
+                except:
+                    pass
         return out
             
     def _word2unicode(self, x):
@@ -117,6 +166,14 @@ class Word2Pronounce():
         return self.cns2chewin_map[uni]
 
     def _chewin2han(self, chewin):
+        """
+        注音轉漢語發音
+
+        :parm x: 單一注音(長度:1)
+        :retrun: 漢語拼音
+        :rtype: str
+        """
+
         return self.chewin2han_map[chewin]
 
     def to_chewin(self, x):
@@ -139,6 +196,12 @@ class Word2Pronounce():
         :retrun: 漢語拼音
         :rtype: str
         """
+        # print('to_han input : ',x)
+        # val = self.to_chewin(x)
+        # val2 = self._chewin2han(val)
+        # print('to_han val : ', val)
+        # print('to_han val2 : ', val2)
+
         return self._chewin2han(self.to_chewin(x))
     
     def char_pronounce_similar(self, a, b):
