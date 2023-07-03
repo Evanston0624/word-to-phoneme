@@ -1,3 +1,7 @@
+# Source URL : https://github.com/p208p2002/py-chinese-pronounce
+- This is only for testing the modification function
+- If you have any questions about the program copyright, please write to g192e1654k@gmail.com
+
 # Python Chinese Pronounce
 - 文字轉注音、漢語發音
 - 注音、漢語發音轉文字
