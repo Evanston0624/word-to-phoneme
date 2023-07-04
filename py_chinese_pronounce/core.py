@@ -103,46 +103,32 @@ class Word2Pronounce():
         out = [None] * len(x)
 
         polyphone_check = False
-        print('results : ',results)
 
         for r in results:
             words = r[0]
             w_range = r[-1]
             chewin = self.vocab_pronounce_df.loc[words]['注音一式']
 
-            print('chewin_ori:',chewin,'\n')
-
             if type(chewin) == str:
                 chewin = chewin.strip().split()
             else:
                 chewin = chewin.to_list()
-            print('chewin_check:',chewin,'\n')
 
             # 當輸入是多音詞時
             if (len(words) > 1 and len(chewin) > 1 and '\u3000' in chewin[0]) :
-
                 chewin_pp = self.vocab_pronounce_df.loc[words]['多音排序']
-
                 if type(chewin_pp) == str:
                     chewin_pp = chewin_pp.strip().split()
                 else:
                     chewin_pp = chewin_pp.to_list()
-
-                print('chewin_pp',chewin_pp)
                 idx = chewin_pp.index(min(chewin_pp))
-                print('idx:',idx)
-
                 chewin = chewin[idx].split("\u3000")
-                # continue
-                print('chewin_re',chewin)
 
             chewin_idx = 0
             for i in range(w_range[0],w_range[1]):
                 chewin_list[i] = chewin[chewin_idx]
                 chewin_idx += 1
-            print('chewin_list:',chewin_list,'\n')
 
-        print('chewin_list:',chewin_list)
         for i in range(len(chewin_list)) :
             out[i] = self._chewin2han(chewin_list[i])
 
@@ -183,7 +169,6 @@ class Word2Pronounce():
         :retrun: 漢語拼音
         :rtype: str
         """
-
         return self.chewin2han_map[chewin]
 
     def to_chewin(self, x):
@@ -206,12 +191,6 @@ class Word2Pronounce():
         :retrun: 漢語拼音
         :rtype: str
         """
-        # print('to_han input : ',x)
-        # val = self.to_chewin(x)
-        # val2 = self._chewin2han(val)
-        # print('to_han val : ', val)
-        # print('to_han val2 : ', val2)
-
         return self._chewin2han(self.to_chewin(x))
     
     def char_pronounce_similar(self, a, b):

@@ -1,6 +1,7 @@
 # Source URL : https://github.com/p208p2002/py-chinese-pronounce
 - This is only for testing the modification function
 - If you have any questions about the program copyright, please write to g192e1654k@gmail.com
+- Added function: sent_to_han(句子轉漢語發音)
 
 # Python Chinese Pronounce
 - 文字轉注音、漢語發音
@@ -43,8 +44,11 @@ w2p.sent_to_chewin("你來扮演這個角色")
 # ['ㄋㄧˇ', 'ㄌㄞˊ', 'ㄅㄢˋ', 'ㄧㄢˇ', 'ㄓㄜˋ', '˙ㄍㄜ', 'ㄐㄩㄝˊ', 'ㄙㄜˋ']
 ```
 
-#### 句子轉漢語發音
-TODO ...
+#### 句子轉漢語發音**
+```python
+w2p.sent_to_han("零一二三")
+# ['ling2', 'yi', 'er4', 'san']
+```
 
 #### 發音相似度比較
 ```python
