@@ -13,8 +13,6 @@ class Word2Pronounce():
     文字轉換發音
     """
     def __init__(self) -> None:
-        print('load W2P')
-
         # uni2cns map
         self.uni2cns_dict_path = os.path.join(
             os.path.dirname(__file__),
@@ -169,6 +167,7 @@ class Word2Pronounce():
         :retrun: 漢語拼音
         :rtype: str
         """
+
         return self.chewin2han_map[chewin]
 
     def to_chewin(self, x):
